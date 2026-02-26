@@ -71,16 +71,16 @@ quality_order = ["Very Poor", "Poor", "Average",
 # FUNCTION TO DISPLAY + SAVE
 # =============================
 
-def show_and_save(fig, filename):
+def display_and_save(fig, filename):
     fig.tight_layout()
     path = os.path.join(save_folder, filename)
     fig.savefig(path, dpi=300)
-    plt.show()
+    plt.show(block=True)
     plt.close(fig)
 
-# =============================
+# =====================================================
 # 1. UNIVARIATE ANALYSIS
-# =============================
+# =====================================================
 
 # Alcohol Distribution
 fig1 = plt.figure()
@@ -88,7 +88,7 @@ sns.histplot(df["alcohol"], bins=40, kde=True)
 plt.title("Univariate Analysis - Alcohol Distribution")
 plt.xlabel("Alcohol")
 plt.ylabel("Frequency")
-show_and_save(fig1, "01_alcohol_distribution.png")
+display_and_save(fig1, "01_alcohol_distribution.png")
 
 # Quality Distribution
 fig2 = plt.figure()
@@ -103,11 +103,11 @@ plt.xticks(rotation=30)
 plt.title("Univariate Analysis - Wine Quality Distribution")
 plt.xlabel("Quality Category")
 plt.ylabel("Count")
-show_and_save(fig2, "02_quality_distribution.png")
+display_and_save(fig2, "02_quality_distribution.png")
 
-# =============================
+# =====================================================
 # 2. BIVARIATE ANALYSIS
-# =============================
+# =====================================================
 
 # Alcohol vs Density
 fig3 = plt.figure()
@@ -115,7 +115,7 @@ sns.scatterplot(x="alcohol", y="density", data=df)
 plt.title("Bivariate Analysis - Alcohol vs Density")
 plt.xlabel("Alcohol")
 plt.ylabel("Density")
-show_and_save(fig3, "03_alcohol_vs_density.png")
+display_and_save(fig3, "03_alcohol_vs_density.png")
 
 # Boxplot
 fig4 = plt.figure()
@@ -131,7 +131,7 @@ plt.xticks(rotation=30)
 plt.title("Alcohol Distribution Across Quality (Boxplot)")
 plt.xlabel("Quality")
 plt.ylabel("Alcohol")
-show_and_save(fig4, "04_alcohol_boxplot.png")
+display_and_save(fig4, "04_alcohol_boxplot.png")
 
 # Violin Plot
 fig5 = plt.figure()
@@ -147,7 +147,7 @@ plt.xticks(rotation=30)
 plt.title("Alcohol Distribution Across Quality (Violin Plot)")
 plt.xlabel("Quality")
 plt.ylabel("Alcohol")
-show_and_save(fig5, "05_alcohol_violin.png")
+display_and_save(fig5, "05_alcohol_violin.png")
 
 # Joint Plot
 joint = sns.jointplot(
@@ -160,14 +160,14 @@ joint = sns.jointplot(
 
 joint.fig.suptitle("Joint Plot - Alcohol vs Quality", y=1.02)
 joint.savefig(os.path.join(save_folder, "06_joint_plot_alcohol_quality.png"))
-plt.show()
+plt.show(block=True)
 plt.close(joint.fig)
 
 print("Joint plot saved.\n")
 
-# =============================
+# =====================================================
 # 3. MULTIVARIATE ANALYSIS
-# =============================
+# =====================================================
 
 # Parallel Coordinates
 features = [
@@ -201,7 +201,7 @@ parallel_coordinates(sample_df, "quality", colormap=plt.get_cmap("tab10"))
 plt.title("Multivariate Analysis - Parallel Coordinates")
 plt.xticks(rotation=45)
 plt.legend(title="Quality")
-show_and_save(fig6, "07_parallel_coordinates.png")
+display_and_save(fig6, "07_parallel_coordinates.png")
 
 # 3D Scatter Plot
 fig7 = plt.figure(figsize=(14, 10))
@@ -229,13 +229,33 @@ ax.set_zlabel("pH")
 ax.set_title("Multivariate Analysis - 3D Scatter (Alcohol, Density, pH)")
 ax.legend(title="Quality Category")
 
-show_and_save(fig7, "08_3d_scatter.png")
+display_and_save(fig7, "08_3d_scatter.png")
 
-# =============================
+# =====================================================
+# 🔥 NEW: HEATMAP (Correlation Matrix)
+# =====================================================
+
+fig8 = plt.figure(figsize=(14, 10))
+
+corr = df.corr(numeric_only=True)
+
+sns.heatmap(
+    corr,
+    annot=True,
+    fmt=".2f",
+    cmap="coolwarm",
+    linewidths=0.5
+)
+
+plt.title("Correlation Heatmap of Wine Features")
+
+display_and_save(fig8, "09_correlation_heatmap.png")
+
+# =====================================================
 # Alcohol Distribution Across Quality
-# =============================
+# =====================================================
 
-fig8 = plt.figure()
+fig9 = plt.figure()
 
 sns.histplot(
     data=df,
@@ -249,11 +269,11 @@ plt.title("Alcohol Distribution Across Quality Levels")
 plt.xlabel("Alcohol")
 plt.ylabel("Count")
 
-show_and_save(fig8, "09_alcohol_distribution_quality.png")
+display_and_save(fig9, "10_alcohol_distribution_quality.png")
 
-# =============================
-# FINAL OUTPUT (Exactly Like You Want)
-# =============================
+# =====================================================
+# FINAL OUTPUT
+# =====================================================
 
 print("\n====================================")
 print("FINAL REPORT")
@@ -264,6 +284,7 @@ print("""
   - Univariate (Continuous + Categorical)
   - Bivariate (Scatter + Boxplot + Violin + Joint Plot)
   - Multivariate (Parallel Coordinates + 3D Scatter)
+  - Heatmap (Correlation Matrix)
   - Alcohol Distribution Across Quality
 
 ✔ Graphs saved inside 'saved_graphs' folder.
